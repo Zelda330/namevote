@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+  <title>芋圆大名投票</title>
+  <style>
+    /* 引入字体 */
+    @font-face {
+      font-family: 'KaiTi';
+      src: url('https://fonts.googleapis.com/css2?family=KaiTi&display=swap');
+    }
+
+    @font-face {
+      font-family: 'ShouJinTi';
+      src: url('https://cdn.jsdelivr.net/gh/Fonts-Repo/chinese-fonts-ttf@master/ttf/SimSun-ExtB.ttf');
+    }
+
+    /* 全局样式 */
+    body {
+      font-family: 'KaiTi', serif;
+      background-color: #f5f5dc;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    /* 头部样式 */
+    .header {
+      text-align: center;
+      padding: 40px 0;
+      position: relative;
+    }
+
+    .title {
+      font-size: 80px;
+      margin-bottom: 10px;
+      color: #5d4037;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      font-size: 50px;
+      margin-bottom: 20px;
+      color: #795548;
+      font-weight: bold;
+    }
+
+    /* 主体样式 */
+    .main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .name-option {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #bcaaa4;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      position: relative;
+      background-color: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .name-option:hover {
+      transform: scale(1.02);
+      background-color: rgba(245, 240, 235, 0.8);
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #795548;
+      border-radius: 4px;
+      margin-right: 20px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    input[type="checkbox"]::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #795548;
+    }
+
+    input[type="checkbox"]:checked::after {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+    }
+
+    label {
+      font-size: 28px;
+      color: #5d4037;
+      font-weight: bold;
+      margin-right: 20px;
+    }
+
+    p {
+      font-size: 16px;
+      color: #6d4c41;
+      margin-top: 10px;
+    }
+
+    /* 优化投票按钮样式 */
+    button {
+      display: block;
+      margin: 40px auto 0;
+      padding: 20px 40px;
+      background-color: #ff6b6b;
+      color: #fff;
+      font-size: 32px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background-color: #ff4757;
+      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.5);
+    }
+
+    /* 结果部分样式 */
+    #resultSection {
+      margin-top: 40px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+      font-size: 28px;
+      color: #795548;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    #barChart {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      height: 300px;
+      margin-top: 20px;
+      padding: 0 20px;
+    }
+
+    .bar {
+      width: 8%;
+      background-color: #795548;
+      border-radius: 5px 5px 0 0;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .bar:hover {
+      transform: scaleY(1.05);
+    }
+
+    .bar-label {
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .bar-value {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+    }
+
+    /* 音乐按钮样式 */
+    #musicButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: #795548;
+      border: 1px solid #795548;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #musicButton:hover {
+      transform: scale(1.1);
+    }
+
+    /* 信息部分样式 */
+    .info-section {
+      margin-top: 20px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .info-section div {
+      padding: 10px;
+      border: 1px solid #bcaaa4;
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .info-title {
+      font-size: 18px;
+      color: #795548;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    /* 书法块样式 */
+    .calligraphy-block {
+      width: 150px;
+      height: 80px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">芋圆大名投票</h1>
+      <p class="subtitle">请勾选出3个您最喜欢的姓名</p>
+    </div>
+    <div class="main">
+      <div id="nameOptions"></div>
+      <button id="submitButton">投票</button>
+      <div id="resultSection">
+        <h2 class="section-title">实时投票结果</h2>
+        <div id="barChart"></div>
+      </div>
+    </div>
+    <button id="musicButton">
+      <i class="fa-solid fa-music"></i>
+    </button>
+  </div>
+  <script>
+    const names = ['金墨竹', '金徽雪', '金徽宁', '金安然', '金逸宁', '金照卿', '金砚晴', '金灵逍', '金灵毓', '金乐筠'];
+    const votes = {};
+    let selectedNames = [];
+    let musicPlaying = false;
+    const music = new Audio('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/CHAD_Crouch/Time_Machine/CHAD_Crouch_-_01_-_Ancient_Future.mp3');
+    music.loop = true;
+
+    const info = {
+      '金墨竹': {
+        '字意解析': '墨：《说文》“书墨也”，松烟制墨，象征文采与学识（土行，土主信、主稳重）。竹：《尔雅》“冬生草”，中空有节，喻高洁虚心（木行，木主仁、主贵显）。',
+        '文化溯源': '文同《墨竹图》题诗 “拟将一段鹅溪绢，扫取寒梢万尺长”，以墨竹写君子风骨；郑燮《竹石》“咬定青山不放松” 赋竹坚韧，苏轼 “诗画本一律” 论墨竹通神，典籍共证 “墨韵竹魂”。',
+        '美好内涵': '愿她如墨竹生于宣纸之上：墨色是腹有诗书的沉淀，竹节是不折不屈的脊梁，叶片是随风作响的清韵。在岁月的长卷上，既守文人的清雅，又具草木的蓬勃，行止间自有 “墨香染袖，竹影摇窗” 的诗意。',
+        '五行精义': '墨（土）生竹（木）：土为木之根，木为土之华，如沃土育修竹，根基深厚而枝叶舒展。土主稳重，木主贵显，五行相生助旺 “贵显运”，象征才学如墨韵深厚，品格如竹节端直，一生贵人扶持，节节高升，贵显而不矜。'
+      },
+      '金徽雪': {
+        '字意解析': '徽：《尔雅》“徽，美也”，亦指美好标识（金行，金主贵、主刚健）；雪：《说文》“冰雨说物者”，冰晶凝洁，喻纯净无瑕（水行，水主智、主灵动）。',
+        '文化溯源': '李之仪《千秋岁・咏琴》“金徽泛处，漏声犹滴”，琴徽映雪，清韵幽远；岑参 “忽如一夜春风来” 绘雪之壮美，卢纶 “雪满山中高士卧” 赋雪以孤高，雪与 “徽” 相契，如美人披雪，皎皎不群。',
+        '美好内涵': '她是 “金徽上的雪光”—— 徽之美，在琴头标识的精致；雪之洁，在天地一白的纯粹。愿她眼含雪色清澈，心藏徽光璀璨，如 “雪落寒梅” 般冷艳清贵，似 “玉徽映月” 般优雅从容，一生 “清辉入户，纤尘不染”。',
+        '五行精义': '徽（金）生水（雪）：金为水之母，水为金之流，金白水清，如良玉映清泉，水质清澈则智识通达。金主贵气，水主聪慧，五行流转生 “贵显智”，象征天资聪慧如冰雪剔透，贵气内敛如金徽暗藏，一生贵人相助，福泽如水长流。'
+      },
+      '金徽宁': {
+        '字意解析': '徽：同前，美好卓越（金行）；宁：《尔雅》“宁，安也”，从宀从心，喻安定平和（火行，火主贵气、主光明）。',
+        '文化溯源': '《诗经・小雅》“丧乱既平，既安且宁”，祈愿天下康宁；陶渊明《归园田居》“户庭无尘杂，虚室有余闲”，写内心安宁之境；韦应物 “宁知草间人，腰下有龙泉”，“宁” 藏淡泊而坚韧的品格。',
+        '美好内涵': '“徽” 是外在的光华，“宁” 是内心的锚点。愿她如 “徽音清响” 般出众，似 “宁日静照” 般从容 —— 于喧嚣中守一方清宁，于繁华里持一份本真，像 “明月照松间” 的清寂，亦如 “清泉石上流” 的恒常，一生 “徽光不惑，宁心自暖”。',
+        '五行精义': '徽（金）生火（宁）：火为金之荣，金为火之基，金生火贵气显，如暖阳融金，温暖长伴。金主刚健，火主贵显，象征贵人相助、家庭和美，五行相合寓意 “贵显而不躁，安暖而恒长”。'
+      },
+      '金安然': {
+        '字意解析': '安：《说文》“静也”，宀下有女，喻平安顺遂（土行，土主稳、主根基）；然：《玉篇》“如此”，从火，象征通达自然（火行，火主礼、主贵显）。',
+        '文化溯源': '《论语》“仁者安仁，知者利仁”，心安是仁之基；陶渊明 “久在樊笼里，复得返自然”，“然” 写自在洒脱；苏轼 “回首向来萧瑟处，归去，也无风雨也无晴”，暗含 “安然” 的豁达境界。',
+        '美好内涵': '“安” 是 “家人闲坐，灯火可亲” 的温暖，“然” 是 “行到水穷处，坐看云起时” 的从容。愿她如 “春山安卧” 般静美，似 “秋风飒然” 般清朗，在岁月里 “安” 于本心，“然” 于天地，无论顺逆，皆能 “胸有丘壑，眼存温柔”。',
+        '五行精义': '安（土）生火（然）：土为火之母，火为土之华，火土相生贵气显，如厚土承光，万物萌发。土主根基，火主贵显，象征根基稳如磐石，前路明似烛火，一生贵人运强，平安顺遂。'
+      },
+      '金逸宁': {
+        '字意解析': '逸：《说文》“失也，从辵兔”，引申为超脱自在、安乐舒逸（土行，土主稳、主包容）；宁：同前，安定平和（火行，火主贵气、主光明）。',
+        '文化溯源': '陶渊明《归去来兮辞》“策扶老以流憩，时矫首而遐观”，“逸” 藏田园舒逸之趣；《诗经・大雅》“民之质矣，日用饮食，群黎百姓，遍为尔德”，“宁” 含 “百姓安宁” 的社稷之愿；庄子《逍遥游》“夫列子御风而行，泠然善也”，“逸” 与 “宁” 合，似 “闲云逸致，心宁如镜”。',
+        '美好内涵': '“逸” 是 “采菊东篱” 的悠然，是 “行到水穷” 的从容；“宁” 是 “细水长流” 的安稳，是 “灯火可亲” 的温暖。愿她如 “逸云出岫” 般自在，似 “宁月入怀” 般清宁 —— 不困于俗务，不忧于变迁，在时光里 “逸” 出自我，“宁” 守初心，一生 “逸趣横生，宁和永随”。',
+        '五行精义': '逸（土）生火（宁）：土为火之母，火为土之华，火土相生贵气显，如厚土承光，温暖不息。土主稳厚，火主贵显，象征 “稳如泰山而心怀光明”，贵人相助力强，一生安稳贵显，舒逸顺遂。'
+      },
+      '金照卿': {
+        '字意解析': '照：《说文》“明也”，从火，喻智慧光明（火行，火主礼、主光明）；卿：《尔雅》“卿，君也”，尊称贤能，藏温婉贵气（木行，木主仁、主贵显）。',
+        '文化溯源': '苏轼 “一点浩然气，千里快哉风”，“照” 如心灯破雾；《诗经・卫风》“硕人其颀，公侯之卿”，“卿” 为才德兼备之喻；李白 “永结无情游，相期邈云汉”，“卿” 含知己之重，照卿相映，如 “明烛照佳人，清辉共长天”。',
+        '美好内涵': '“照” 是 “皎如太阳升朝霞” 的明亮，“卿” 是 “所谓伊人，在水一方” 的清扬。愿她眼含星光，心藏暖灯，以智慧照前路，以温柔待世人，如 “朝日照青空” 般璀璨，似 “春风拂卿面” 般和煦，一生 “光而不耀，贵而不矜”。',
+        '五行精义': '照（火）生卿（木）：火为木之荣，木为火之基，木火通明贵气显，如佳木承光，枝叶烨烨。火主智慧，木主贵显，象征以智慧照亮仁心，贵显如星光闪耀，贵人运强如阳光普照，一生 “贵显在德，光明在行”，声名远播而亲和有加。'
+      },
+      '金砚晴': {
+        '字意解析': '砚：《说文》“石滑也”，文房重器，喻学识厚重（土行，土主信、主厚重）；晴：《尔雅》“晴，雨止也”，从日，象征开朗光明（火行，火主礼、主贵显）。',
+        '文化溯源': '米芾《砚史》“砚，文之田也”，砚田耕墨，孕育才思；刘禹锡 “晴空一鹤排云上，便引诗情到碧霄”，“晴” 藏凌云之志；陆游 “晴窗细乳戏分茶”，砚与晴合，写文人 “晴窗研墨，诗酒趁年华” 的雅趣。',
+        '美好内涵': '“砚” 是 “墨池飞出北溟鱼” 的才情，“晴” 是 “东边日出西边雨” 的明快。愿她以砚为舟，渡学海茫茫；以晴为翼，翱天地朗朗，胸藏万卷而心怀暖阳，如 “砚凝墨香” 般厚重，似 “晴展虹光” 般绚烂，一生 “笔耕不辍，晴日长明”。',
+        '五行精义': '砚（土）生火（晴）：土为火之母，火为土之华，火土相生贵气显，如烈日熔金，土暖生金。土主学识，火主贵显，象征根基如砚石坚固，前途似晴日璀璨，一生贵人相助，贵显有成。'
+      },
+      '金灵逍': {
+        '字意解析': '灵：《说文》“巫也”，通神聪慧，喻灵动超凡（火行，火主礼、主光明）；逍：《庄子》“逍遥”，自在无拘，藏旷达之心（金行，金主贵、主刚健）。',
+        '文化溯源': '《庄子・逍遥游》“乘天地之正，御六气之辩”，写心灵自由；李白 “人生在世须尽欢，莫使金樽空对月”，“逍” 藏豪情逸致；苏轼 “一点灵心，本无遮障”，“灵” 显聪慧通透，二者合璧，如 “灵凤逍游于九天，不坠青云之志”。',
+        '美好内涵': '“灵” 是 “灵心胜玉” 的通透，“逍” 是 “闲云野鹤” 的洒脱。愿她不受尘网羁绊，不被俗务所困，眼有星辰大海，心藏清风明月，灵思如泉涌，步履自轻盈，在天地间写就 “灵光照世，逍然自在” 的人生诗篇。',
+        '五行精义': '灵（火）克逍（金）：火克金为 “火炼真金”，反助金之精纯，如熔炉锻玉，成器非凡。火主胆识，金主贵显，象征敢闯敢为而终有所成，贵人运暗藏，一生机遇如星火相照，逍遥而不失方向。'
+      },
+      '金灵毓': {
+        '字意解析': '灵：《说文》“巫也，通神”，引申为聪慧灵动（火行，火主光明智慧）；毓：《尔雅》“毓，长也”，本义孕育滋养，《滕王阁序》“钟灵毓秀” 指天地灵气孕育英才（火行，“毓” 含生命之火，亦通 “育”，象征福泽绵长）。',
+        '文化溯源': '王勃《滕王阁序》“物华天宝，龙光射牛斗之墟；人杰地灵，徐孺下陈蕃之榻”，凝练 “钟灵毓秀” 一词，赞山川灵秀孕育英才；《周易》“观其所育，而天地万物之情可见矣”，“毓” 藏生命繁衍之美，与 “灵” 合用，如 “灵气萦绕，毓德于身”。',
+        '美好内涵': '她是 “钟灵毓秀” 的具象化 —— 灵是 “眸若星辰” 的慧黠，毓是 “心似暖春” 的仁善。愿她承天地之灵气，集日月之精华，如滕王阁前的流霞般绚烂，似赣江春水般温润，一生 “灵思如泉涌，毓秀自天成”，所到之处，皆成风景。',
+        '五行精义': '灵（火）+ 毓（火）：双火叠旺，火主礼、主贵显，如烈日当空，光芒四射，象征才华横溢、贵气外露；火生土（土为金之母），暗合 “贵显有根”，贵人扶持力强，一生机遇如星火相照，福泽如沃土绵延。'
+      },
+      '金乐筠': {
+        '字意解析': '乐（lè）：《说文》“五声八音总名”，引申为快乐、安乐（火行，火主热情、喜悦）；筠：《尔雅》“筠，竹也”，竹之青皮，喻坚韧高洁（木行，木主生长、仁厚）。',
+        '文化溯源': '《论语》“知之者不如好之者，好之者不如乐之者”，“乐” 藏求知之趣与生活热忱；《诗经・小雅》“乐只君子，福履将之”，以 “乐” 祈愿幸福顺遂；韦应物 “绿筠尚含粉，圆荷始散芳”，筠竹含露，写自然清美，与 “乐” 合璧，如 “竹下听琴，乐韵清扬”。',
+        '美好内涵': '“乐” 是 “春风得意马蹄疾” 的欢畅，是 “家人围坐，灯火可亲” 的温暖；“筠” 是 “千磨万击还坚劲” 的坚韧，是 “独坐幽篁里” 的清逸。愿她如乐音般自带感染力，似竹枝般折不弯、压不垮，一生 “乐以忘忧，筠以修身”，所行皆坦途，所遇皆温暖。',
+        '五行精义': '乐（火）+ 筠（木）：木生火，木火通明（木为火之母，火为木之华），如青竹承日，生机盎然。木主仁善，火主快乐，象征仁礼兼备、贵人运强，人际关系和谐；火为快乐之源，木为坚韧之基，寓意 “快乐有根，顺遂有源”，一生活力充沛，贵人相助，如阳光照竹林，青翠长青。'
+      }
+    };
+
+    names.forEach(name => {
+      votes[name] = 0;
+    });
+
+    function renderNameOptions() {
+      const nameOptionsDiv = document.getElementById('nameOptions');
+      names.forEach((name, index) => {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'name-option';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = name;
+        checkbox.addEventListener('change', updateResults);
+
+        const label = document.createElement('label');
+        label.textContent = name;
+
+        const calligraphyBlock = document.createElement('div');
+        calligraphyBlock.className = 'calligraphy-block';
+        const canvas = document.createElement('canvas');
+        canvas.id = `canvas-${index}`;
+        canvas.style.width = '150px';
+        canvas.style.height = '80px';
+        calligraphyBlock.appendChild(canvas);
+
+        const infoSection = document.createElement('div');
+        infoSection.className = 'info-section';
+        const infoTypes = ['字意解析', '文化溯源', '美好内涵', '五行精义'];
+        infoTypes.forEach(type => {
+          const infoDiv = document.createElement('div');
+          const infoTitle = document.createElement('span');
+          infoTitle.className = 'info-title';
+          infoTitle.textContent = type;
+          const infoText = document.createElement('p');
+          infoText.textContent = info[name][type];
+          infoDiv.appendChild(infoTitle);
+          infoDiv.appendChild(infoText);
+          infoSection.appendChild(infoDiv);
+        });
+
+        optionDiv.appendChild(checkbox);
+        optionDiv.appendChild(label);
+        optionDiv.appendChild(calligraphyBlock);
+        optionDiv.appendChild(infoSection);
+        nameOptionsDiv.appendChild(optionDiv);
+      });
+    }
+
+    function updateResults() {
+      selectedNames = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+      names.forEach(name => {
+        votes[name] = 0;
+      });
+      selectedNames.forEach(name => {
+        votes[name]++;
+      });
+      renderBarChart();
+    }
+
+    function submitVote() {
+      if (selectedNames.length!== 3) {
+        alert('请勾选出3个您最喜欢的姓名！');
+        return;
+      }
+      alert('投票成功！');
+    }
+
+    function toggleMusic() {
+      if (musicPlaying) {
+        music.pause();
+        document.getElementById('musicButton').innerHTML = '<i class="fa-solid fa-music"></i>';
+      } else {
+        music.play();
+        document.getElementById('musicButton').innerHTML = '<i class="fa-solid fa-pause"></i>';
+      }
+      musicPlaying =!musicPlaying;
+    }
+
+    function renderBarChart() {
+      const barChartDiv = document.getElementById('barChart');
+      barChartDiv.innerHTML = '';
+      const maxVotes = Math.max(...Object.values(votes));
+      names.forEach(name => {
+        const barDiv = document.createElement('div');
+        barDiv.className = 'bar';
+        barDiv.style.height = `${(votes[name] / maxVotes) * 100 || 0}%`;
+
+        const barLabel = document.createElement('div');
+        barLabel.className = 'bar-label';
+        barLabel.textContent = name;
+
+        const barValue = document.createElement('div');
+        barValue.className = 'bar-value';
+        barValue.textContent = votes[name];
+
+        barDiv.appendChild(barLabel);
+        barDiv.appendChild(barValue);
+        barChartDiv.appendChild(barDiv);
+      });
+    }
+
+    renderNameOptions();
+    renderBarChart();
+
+    document.getElementById('submitButton').addEventListener('click', submitVote);
+    document.getElementById('musicButton').addEventListener('click', toggleMusic);
+  </script>
+</body>
+
+</html>
+    
